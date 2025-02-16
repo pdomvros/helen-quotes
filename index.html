@@ -10,12 +10,16 @@
             background-size: cover;
             text-align: center;
             font-family: Arial, sans-serif;
-            color: blue;
+            color: black; /* Αλλαγή χρώματος κειμένου για καλύτερη ανάγνωση */
             margin: 0;
             padding: 0;
         }
         .container {
             margin-top: 50px;
+            background: rgba(255, 255, 255, 0.7); /* Ημιαδιάφανο background για το κείμενο */
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
         }
         h1 {
             font-weight: bold;
@@ -52,6 +56,7 @@
             background: rgba(0, 0, 0, 0.6);
             display: inline-block;
             border-radius: 10px;
+            color: white; /* Χρώμα κειμένου για τις φράσεις */
         }
         .tab {
             display: none;
@@ -160,7 +165,14 @@
 
         function checkAnswer(character) {
             if (character === currentQuote.speaker) {
-                document.getElementById("hero-image").src = character.toLowerCase() + ".png";
+                const imageMap = {
+                    "Ελένη": "helen.png",
+                    "Μενέλαος": "menelaos.png",
+                    "Θεοκλύμενος": "theoklimenos.png",
+                    "Θεονόη": "theonoi.png",
+                    "Διόσκουροι": "dioskouroi.png"
+                };
+                document.getElementById("hero-image").src = imageMap[character];
                 document.getElementById("full-quote").innerText = currentQuote.full;
                 document.getElementById("result-tab").style.display = "block";
             } else {
