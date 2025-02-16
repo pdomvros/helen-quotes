@@ -1,1 +1,176 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ποιος/ποια το είπε;</title>
+    <style>
+        body {
+            background-image: url('background.png');
+            background-size: cover;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h1 {
+            font-weight: bold;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-style: italic;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .quote {
+            font-size: 20px;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            display: inline-block;
+            border-radius: 10px;
+        }
+        .tab {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffcc00;
+            color: black;
+            padding: 20px;
+            border: 2px solid black;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        .tab img {
+            width: 150px;
+            margin-bottom: 15px;
+        }
+        .tab p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .tab button {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .tab button:hover {
+            background-color: #cc0000;
+        }
+        .emoticon {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Δημιουργία: Παναγιώτης Δόμβρος 2025 (CC BY-NC) 📜</p>
+        <h1>«Ποιος/ποια το είπε;» 🎭</h1>
+        <h2>«Αναγνώριση Παραπομπών και Χαρακτηρισμός των Ηρώων και Ηρωίδων της Ελένης του Ευριπίδη» 📖</h2>
+        <p>Πάτησε το πλήκτρο «Αναζήτηση» και αναγνώρισε ποιος/ποια χαρακτήρας το έχει πει. Πάτα πάνω στο κουμπί με το όνομα του χαρακτήρα για έλεγχο. Στο Φύλλο Εργασίας σημείωσε με (✓) το επίθετο που περιγράφει το στοιχείο του χαρακτήρα του ήρωα ή της ηρωίδας. ✍️</p>
+        <button onclick="generateQuote()">Αναζήτηση 🔍</button>
+        <div class="quote" id="quote"></div>
+        <br>
+        <button onclick="checkAnswer('Ελένη')">Ελένη 👸</button>
+        <button onclick="checkAnswer('Μενέλαος')">Μενέλαος 👑</button>
+        <button onclick="checkAnswer('Θεοκλύμενος')">Θεοκλύμενος 🏛️</button>
+        <button onclick="checkAnswer('Θεονόη')">Θεονόη 🔮</button>
+        <button onclick="checkAnswer('Διόσκουροι')">Διόσκουροι ⚔️</button>
+    </div>
 
+    <div class="tab" id="result-tab">
+        <img id="hero-image" src="" alt="Hero Image">
+        <p id="full-quote"></p>
+        <button onclick="closeTab()">Κλείσιμο ❌</button>
+    </div>
+    
+    <audio id="fail-sound" src="fail-sound.mp3"></audio>
+
+    <script>
+        const quotes = [
+            { text: "Γιατί οι θεοί με μισούν τόσο, αφού δεν έφταιξα σε τίποτα;", speaker: "Ελένη", full: "Γιατί οι θεοί με μισούν τόσο, αφού δεν έφταιξα σε τίποτα; (Ελένη, στ. 86-87)" },
+            { text: "Δεν ήμουν εγώ που έφυγα στην Τροία· ο Δίας με προστάτεψε", speaker: "Ελένη", full: "Δεν ήμουν εγώ που έφυγα στην Τροία· ο Δίας με προστάτεψε (Ελένη, στ. 32-33)" },
+            { text: "Ούτε πήγα ποτέ στην κακορίζικη την Τροία ούτε βάδισα το κάστρο της", speaker: "Ελένη", full: "Ούτε πήγα ποτέ στην κακορίζικη την Τροία ούτε βάδισα το κάστρο της (Ελένη, στ. 588-589)" },
+            { text: "Είναι πιο σωστό να κερδίσεις με εξυπνάδα παρά με τη βία", speaker: "Ελένη", full: "Είναι πιο σωστό να κερδίσεις με εξυπνάδα παρά με τη βία (Ελένη, στ. 1098-1099)" },
+            { text: "Οι θεοί με δοκιμάζουν, αλλά δεν θα επιτρέψουν να χαθεί η αλήθεια", speaker: "Ελένη", full: "Οι θεοί με δοκιμάζουν, αλλά δεν θα επιτρέψουν να χαθεί η αλήθεια (Ελένη, στ. 1210)" },
+            { text: "Πέθανα χωρίς να έχω πεθάνει και υποφέρω δεινά που δεν έκανα", speaker: "Ελένη", full: "Πέθανα χωρίς να έχω πεθάνει και υποφέρω δεινά που δεν έκανα (Ελένη, στ. 270)" },
+            { text: "Οι θεοί είναι εκείνοι που κατέστρεψαν την Τροία, όχι εγώ", speaker: "Ελένη", full: "Οι θεοί είναι εκείνοι που κατέστρεψαν την Τροία, όχι εγώ (Ελένη, στ. 276-277)" },
+            { text: "Μήπως είναι καιρός να καταφύγουμε σε κάποια πανουργία;", speaker: "Ελένη", full: "Μήπως είναι καιρός να καταφύγουμε σε κάποια πανουργία; (Ελένη, στ. 1052)" },
+            { text: "Μενέλαος δεν είμαι πια, αλλά μια σκιά", speaker: "Μενέλαος", full: "Μενέλαος δεν είμαι πια, αλλά μια σκιά (Μενέλαος, στ. 588)" },
+            { text: "Τι κρίμα, να καταντήσω ζητιάνος, εγώ που κάποτε ήμουν βασιλιάς της Σπάρτης", speaker: "Μενέλαος", full: "Τι κρίμα, να καταντήσω ζητιάνος, εγώ που κάποτε ήμουν βασιλιάς της Σπάρτης (Μενέλαος, στ. 415-416)" },
+            { text: "Κανείς δεν πιστεύει πως είμαι εγώ, κι όμως υπάρχω!", speaker: "Μενέλαος", full: "Κανείς δεν πιστεύει πως είμαι εγώ, κι όμως υπάρχω! (Μενέλαος, στ. 603-604)" },
+            { text: "Ποιανού παιχνίδι είναι αυτή η απάτη;", speaker: "Μενέλαος", full: "Ποιανού παιχνίδι είναι αυτή η απάτη; (Μενέλαος, στ. 593)" },
+            { text: "Αν εσύ είσαι η Ελένη, τότε ποιαν πολέμησα στην Τροία;", speaker: "Μενέλαος", full: "Αν εσύ είσαι η Ελένη, τότε ποιαν πολέμησα στην Τροία; (Μενέλαος, στ. 638)" },
+            { text: "Θα πεθάνω ή θα την πάρω πίσω στη Σπάρτη", speaker: "Μενέλαος", full: "Θα πεθάνω ή θα την πάρω πίσω στη Σπάρτη (Μενέλαος, στ. 1132)" },
+            { text: "Πρέπει να σκεφτούμε ένα τέχνασμα, όπως τότε στην Τροία", speaker: "Μενέλαος", full: "Πρέπει να σκεφτούμε ένα τέχνασμα, όπως τότε στην Τροία (Μενέλαος, στ. 1110)" },
+            { text: "Ο θρόνος είναι δικός μου, και όποιος σταθεί εμπόδιο, θα χαθεί", speaker: "Θεοκλύμενος", full: "Ο θρόνος είναι δικός μου, και όποιος σταθεί εμπόδιο, θα χαθεί (Θεοκλύμενος, στ. 845)" },
+            { text: "Οι γυναίκες πρέπει να υποτάσσονται στους άντρες", speaker: "Θεοκλύμενος", full: "Οι γυναίκες πρέπει να υποτάσσονται στους άντρες (Θεοκλύμενος, στ. 910)" },
+            { text: "Ας γίνει όπως επιθυμείς, αφού οι θεοί το θέλουν", speaker: "Θεοκλύμενος", full: "Ας γίνει όπως επιθυμείς, αφού οι θεοί το θέλουν (Θεοκλύμενος, στ. 1260)" },
+            { text: "Τόσο εύκολα με ξεγελάσατε;", speaker: "Θεοκλύμενος", full: "Τόσο εύκολα με ξεγελάσατε; (Θεοκλύμενος, στ. 1410)" },
+            { text: "Δε θα τολμήσει να με απατήσει η αδελφή μου!", speaker: "Θεοκλύμενος", full: "Δε θα τολμήσει να με απατήσει η αδελφή μου! (Θεοκλύμενος, στ. 1003)" },
+            { text: "Ο άνθρωπος νομίζει πως κυβερνά, μα είναι υποχείριος της Μοίρας", speaker: "Θεονόη", full: "Ο άνθρωπος νομίζει πως κυβερνά, μα είναι υποχείριος της Μοίρας (Θεονόη, στ. 1022)" },
+            { text: "Να ακούσω τον φόβο ή τη δικαιοσύνη;", speaker: "Θεονόη", full: "Να ακούσω τον φόβο ή τη δικαιοσύνη; (Θεονόη, στ. 1073)" },
+            { text: "Αυτή η γυναίκα δεν είναι ένοχη· αφήστε την να φύγει", speaker: "Θεονόη", full: "Αυτή η γυναίκα δεν είναι ένοχη· αφήστε την να φύγει (Θεονόη, στ. 1089)" },
+            { text: "Δεν θα προδώσω έναν αθώο, γιατί ο Δίας βλέπει τα πάντα", speaker: "Θεονόη", full: "Δεν θα προδώσω έναν αθώο, γιατί ο Δίας βλέπει τα πάντα (Θεονόη, στ. 1060)" },
+            { text: "Από σφάλμα των θεών πολεμήσατε, και όχι από πράξη της αδελφής μας", speaker: "Διόσκουροι", full: "Από σφάλμα των θεών πολεμήσατε, και όχι από πράξη της αδελφής μας (Διόσκουροι, στ. 1658)" },
+            { text: "Η Ελένη πρέπει να επιστρέψει στη Σπάρτη, έτσι είναι γραμμένο", speaker: "Διόσκουροι", full: "Η Ελένη πρέπει να επιστρέψει στη Σπάρτη, έτσι είναι γραμμένο (Διόσκουροι, στ. 1675)" },
+            { text: "Η αλήθεια βγαίνει στο φως, και κανείς δεν θα σας αδικήσει πια", speaker: "Διόσκουροι", full: "Η αλήθεια βγαίνει στο φως, και κανείς δεν θα σας αδικήσει πια (Διόσκουροι, στ. 1680)" },
+            { text: "Σου λέμε, Ελένη, δεν είναι πια η μοίρα σου να μείνεις εδώ· ο Δίας έχει άλλα σχέδια", speaker: "Διόσκουροι", full: "Σου λέμε, Ελένη, δεν είναι πια η μοίρα σου να μείνεις εδώ· ο Δίας έχει άλλα σχέδια (Διόσκουροι, στ. 1660-1661)" },
+            { text: "Ο πόλεμος για σένα ήταν μάταιος, αλλά τώρα είναι η ώρα να σωθείς", speaker: "Διόσκουροι", full: "Ο πόλεμος για σένα ήταν μάταιος, αλλά τώρα είναι η ώρα να σωθείς (Διόσκουροι, στ. 1665)" },
+            { text: "Μην ανησυχείς, αδελφή μας, ο δρόμος της σωτηρίας σου είναι ανοιχτός", speaker: "Διόσκουροι", full: "Μην ανησυχείς, αδελφή μας, ο δρόμος της σωτηρίας σου είναι ανοιχτός (Διόσκουροι, στ. 1670)" }
+        ];
+
+        let currentQuote = {};
+
+        function generateQuote() {
+            currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById("quote").innerText = currentQuote.text;
+        }
+
+        function checkAnswer(character) {
+            if (character === currentQuote.speaker) {
+                document.getElementById("hero-image").src = character.toLowerCase() + ".png";
+                document.getElementById("full-quote").innerText = currentQuote.full;
+                document.getElementById("result-tab").style.display = "block";
+            } else {
+                document.getElementById("fail-sound").play();
+            }
+        }
+
+        function closeTab() {
+            document.getElementById("result-tab").style.display = "none";
+        }
+    </script>
+</body>
+</html>
